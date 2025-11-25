@@ -37,11 +37,13 @@
 		"typescript-eslint": "^8.32.1"
 	},
 	"dependencies": {
+		"@types/kafkajs": "^1.8.2",
 		"@types/pg": "^8.15.6",
 		"@types/pg-pool": "^2.0.6",
 		"body-parser": "^2.2.0",
 		"dotenv": "^17.2.3",
 		"express": "^5.1.0",
+		"kafkajs": "^2.2.4",
 		"pg": "^8.16.3",
 		"pg-pool": "^3.10.1"
 	}
