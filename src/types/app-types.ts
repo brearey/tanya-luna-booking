@@ -9,3 +9,9 @@ export type ApiResponse = {
 	data: unknown
 	errors: ApiError[]
 }
+
+// CREATED — бронь только что создана через API.
+// CHECKING_AVAILABILITY — система проверяет есть ли свободные столики.
+// CONFIRMED — столик зарезервирован.
+// REJECTED — бронь отклонена.
+export type BookingStatus = 'CREATED' | 'CHECKING_AVAILABILITY' | 'CONFIRMED' | 'REJECTED'

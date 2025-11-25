@@ -1,3 +1,5 @@
+drop table if exists restaurant;
+drop table if exists booking;
 create table restaurant
 (
   id serial primary key,
@@ -10,6 +12,7 @@ create table booking
   restaurant_id bigint not null,
   guest_count numeric not null default 0,
   booking_date date not null default current_date,
+  booking_status varchar not null default 'CREATED',
   constraint fk_booking_restaurant_id foreign key (restaurant_id) references restaurant(id)
 );
 
