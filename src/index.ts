@@ -22,6 +22,28 @@ app.get('/api/health', (req, res) => {
 	res.status(200).json(response)
 })
 
+app.get('/api/bookings/:bookingId', async (req, res) => {
+	try {
+    const db = connect()
+    const bookings = await db.query('SELECT * FROM booking WHERE id = $1', [req.params.bookingId])
+    const response: ApiResponse = {
+      success: true,
+      message: 'ok',
+      data: bookings.rows,
+      errors: [],
+    }
+    res.status(200).json(response)
+  } catch(e: unknown) {
+    const err = e as ApiError
+    res.status(500).json({
+      success: false,
+      message: 'error',
+      data: null,
+      errors: [err],
+    })
+  }
+})
+
 app.get('/api/bookings', async (req, res) => {
 	try {
     const db = connect()
