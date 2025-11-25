@@ -1,5 +1,5 @@
-drop table if exists restaurant;
 drop table if exists booking;
+drop table if exists restaurant;
 create table restaurant
 (
   id serial primary key,

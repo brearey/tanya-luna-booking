@@ -4,7 +4,6 @@
 	"description": "tanya-luna-booking project",
 	"main": "index.js",
 	"scripts": {
-		"seed": "ts-node ./src/database/seed.ts",
 		"build": "tsc --build",
 		"clean": "tsc --build --clean",
 		"prod": "node ./dist/index.js",
