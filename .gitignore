@@ -4,4 +4,8 @@ api-service/dist/
 api-service/node_modules/
 api-service/generated/
 api-service/.env
+booking-service/dist/
+booking-service/node_modules/
+booking-service/generated/
+booking-service/.env
 .env
