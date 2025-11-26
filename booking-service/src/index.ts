@@ -49,6 +49,9 @@ async function subscribe() {
 				})
         // select * from booking where id = 2;
         const bookingResult = await db.query('select * from booking where id = $1;', [msg.id])
+        // Set booking status CHECKING_AVAILABILITY
+        const debug = await db.query('update booking set booking_status = \'CHECKING_AVAILABILITY\' where id = $1 returning id', [bookingResult.rows[0].id])
+        console.log('CHECKING_AVAILABILITY', debug.rows[0])
         /*
         rows: [
           {
@@ -64,13 +67,13 @@ async function subscribe() {
         const restaurantTableResult = await db.query('select * from restaurant_table where is_available = true and id = $1;', [bookingResult.rows[0].restaurant_table_id])
         const isAvailable = restaurantTableResult.rows[0]?.is_available ? restaurantTableResult.rows[0].is_available : null
         if (isAvailable) {
-          const updateTableResult = await db.query('update restaurant_table set is_available = false where id = $1 returning id', [bookingResult.rows[0].restaurant_table_id])
+          await db.query('update restaurant_table set is_available = false where id = $1', [bookingResult.rows[0].restaurant_table_id])
           // const updatedTableId = updateTableResult.rows[0].id
-          const updateBookingResult = await db.query('update booking set booking_status = \'CONFIRMED\' where id = $1 returning id', [bookingResult.rows[0].id])
+          await db.query('update booking set booking_status = \'CONFIRMED\' where id = $1', [bookingResult.rows[0].id])
           // const updatedBookingId = updateBookingResult.rows[0].id
           
         } else {
-          const updateBookingResult = await db.query('update booking set booking_status = \'REJECTED\' where id = $1 returning id', [bookingResult.rows[0].id])
+          await db.query('update booking set booking_status = \'REJECTED\' where id = $1', [bookingResult.rows[0].id])
           // const updatedBookingId = updateBookingResult.rows[0].id
         }
 			}
