@@ -12,8 +12,8 @@ const KAFKA_CLIENT_ID = 'booking-service'
 const KAFKA_TOPIC = 'booking-topic'
 const KAFKA_BROKER = 'localhost:9092'
 const kafka = new Kafka({
-  clientId: KAFKA_CLIENT_ID,
-  brokers: [KAFKA_BROKER]
+	clientId: KAFKA_CLIENT_ID,
+	brokers: [KAFKA_BROKER],
 })
 
 app.use(bodyParser.json())
@@ -30,24 +30,24 @@ app.get('/api/health', async (req, res) => {
 })
 
 async function subscribe() {
-  const consumer = kafka.consumer({ groupId: 'test-group' })
+	const consumer = kafka.consumer({ groupId: 'test-group' })
 
-  await consumer.connect()
-  await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
+	await consumer.connect()
+	await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
 
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      if (message && message?.value) {
-        const createdBooking = JSON.parse(message.value.toString())
-        console.log({
-          id: createdBooking.id,
-          status: createdBooking.status,
-          topic: topic,
-          partition: partition,
-        })
-      }
-    },
-  })
+	await consumer.run({
+		eachMessage: async ({ topic, partition, message }) => {
+			if (message && message?.value) {
+				const createdBooking = JSON.parse(message.value.toString())
+				console.log({
+					id: createdBooking.id,
+					status: createdBooking.status,
+					topic: topic,
+					partition: partition,
+				})
+			}
+		},
+	})
 }
 
 subscribe()
