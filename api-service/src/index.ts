@@ -2,10 +2,10 @@ import { config } from 'dotenv'
 config() // dotenv
 import express, { Application } from 'express'
 import bodyParser from 'body-parser'
-import { ApiResponse, ApiError } from './types/app-types'
+import { ApiResponse, ApiError, BookingStatus } from './types/app-types'
 import { logger } from './utils/logger'
 import { connect } from './db/connect'
-import { Kafka } from 'kafkajs'
+import { Kafka, Partitioners } from 'kafkajs'
 
 const app: Application = express()
 const PORT = process.env.SERVER_PORT || 5000
@@ -82,6 +82,23 @@ app.post('/api/bookings', async (req, res) => {
       req.body.guest_count,
       req.body.booking_date]
     )
+
+    const producer = await kafka.producer({
+      createPartitioner: Partitioners.LegacyPartitioner
+    })
+    const bookingStatus: BookingStatus = 'CREATED'
+    await producer.connect()
+    await producer.send({
+      topic: KAFKA_TOPIC,
+      messages: [{
+        value: JSON.stringify({
+          id: createdBooking.rows[0].id,
+          status: bookingStatus
+        })}
+      ]
+    })
+    await producer.disconnect()
+
     const response: ApiResponse = {
       success: true,
       message: 'ok',
@@ -99,25 +116,6 @@ app.post('/api/bookings', async (req, res) => {
     })
   }
 })
-
-async function subscribe() {
-  const consumer = kafka.consumer({ groupId: 'test-group' })
-
-  await consumer.connect()
-  await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
-
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        message: message.value?.toString(),
-        topic: topic,
-        partition: partition,
-      })
-    },
-  })
-}
-
-subscribe()
 
 app.listen(PORT, () => {
 	console.log(`API service running at http://localhost:${PORT}`)
