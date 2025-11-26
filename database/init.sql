@@ -19,6 +19,9 @@ create table restaurant_table
   constraint fk_booking_restaurant_id foreign key (restaurant_id) references restaurant(id)
 )
 
+-- на самом деле это таблица для заявок на бронирование.
+-- Бронирование может быть успешным status = CONFIRMED или отклоенным status = REJECTED
+-- это зависит от доступности столика
 create table booking
 (
   id serial primary key,
