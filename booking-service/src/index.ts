@@ -19,7 +19,7 @@ const kafka = new Kafka({
 app.use(bodyParser.json())
 app.use(logger.request)
 
-app.get('/api/health', async (req, res) => {
+app.get('/api/produce', async (req, res) => {
   const producer = await kafka.producer({
     createPartitioner: Partitioners.LegacyPartitioner
   })
@@ -27,7 +27,7 @@ app.get('/api/health', async (req, res) => {
   await producer.send({
     topic: KAFKA_TOPIC,
     messages: [
-      { value: `lorriant at ${Date.now().toString()}` }
+      { value: `${Date.now().toString()} ${req.query.value}` }
     ]
   })
   await producer.disconnect()
@@ -40,25 +40,6 @@ app.get('/api/health', async (req, res) => {
 	}
 	res.status(200).json(response)
 })
-
-async function subscribe() {
-  const consumer = kafka.consumer({ groupId: 'test-group' })
-
-  await consumer.connect()
-  await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
-
-  await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        message: message.value,
-        topic: topic,
-        partition: partition,
-      })
-    },
-  })
-}
-
-subscribe()
 
 app.listen(PORT, () => {
 	console.log(`Booking service running at http://localhost:${PORT}`)

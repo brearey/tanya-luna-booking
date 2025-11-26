@@ -5,9 +5,17 @@ import bodyParser from 'body-parser'
 import { ApiResponse, ApiError } from './types/app-types'
 import { logger } from './utils/logger'
 import { connect } from './db/connect'
+import { Kafka } from 'kafkajs'
 
 const app: Application = express()
 const PORT = process.env.SERVER_PORT || 5000
+const KAFKA_CLIENT_ID = 'booking-service'
+const KAFKA_TOPIC = 'booking-topic'
+const KAFKA_BROKER = 'localhost:9092'
+const kafka = new Kafka({
+  clientId: KAFKA_CLIENT_ID,
+  brokers: [KAFKA_BROKER]
+})
 
 app.use(bodyParser.json())
 app.use(logger.request)
@@ -91,6 +99,25 @@ app.post('/api/bookings', async (req, res) => {
     })
   }
 })
+
+async function subscribe() {
+  const consumer = kafka.consumer({ groupId: 'test-group' })
+
+  await consumer.connect()
+  await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
+
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      console.log({
+        message: message.value?.toString(),
+        topic: topic,
+        partition: partition,
+      })
+    },
+  })
+}
+
+subscribe()
 
 app.listen(PORT, () => {
 	console.log(`API service running at http://localhost:${PORT}`)
