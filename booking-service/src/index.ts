@@ -32,7 +32,7 @@ app.get('/api/health', async (req, res) => {
 })
 
 async function subscribe() {
-	const consumer = kafka.consumer({ groupId: 'test-group' })
+	const consumer = kafka.consumer({ groupId: 'booking-group' })
 
 	await consumer.connect()
 	await consumer.subscribe({ topic: KAFKA_TOPIC, fromBeginning: true })
@@ -62,16 +62,16 @@ async function subscribe() {
         */
         // select * from restaurant_table where is_available = true and id = 2;
         const restaurantTableResult = await db.query('select * from restaurant_table where is_available = true and id = $1;', [bookingResult.rows[0].restaurant_table_id])
-        console.log(restaurantTableResult.rows[0])
-        const isAvailable = restaurantTableResult.rows[0].is_available
+        const isAvailable = restaurantTableResult.rows[0]?.is_available ? restaurantTableResult.rows[0].is_available : null
         if (isAvailable) {
           const updateTableResult = await db.query('update restaurant_table set is_available = false where id = $1 returning id', [bookingResult.rows[0].restaurant_table_id])
-          const updatedTableId = updateTableResult.rows[0].id
+          // const updatedTableId = updateTableResult.rows[0].id
           const updateBookingResult = await db.query('update booking set booking_status = \'CONFIRMED\' where id = $1 returning id', [bookingResult.rows[0].id])
-          const updatedBookingId = updateBookingResult.rows[0].id
-          console.log('updatedTableId', updatedTableId)
-          console.log('updatedBookingId', updatedBookingId)
+          // const updatedBookingId = updateBookingResult.rows[0].id
           
+        } else {
+          const updateBookingResult = await db.query('update booking set booking_status = \'REJECTED\' where id = $1 returning id', [bookingResult.rows[0].id])
+          // const updatedBookingId = updateBookingResult.rows[0].id
         }
 			}
 		},

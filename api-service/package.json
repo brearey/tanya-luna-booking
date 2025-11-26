@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc --build",
-		"clean": "tsc --build --clean && rm -r dist",
+		"clean": "tsc --build --clean && rm -rf dist",
 		"prod": "node ./dist/index.js",
 		"dev": "ts-node-dev --rs ./src/index.ts",
 		"test": "jest --rootDir ./src/__tests__",

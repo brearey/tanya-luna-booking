@@ -48,4 +48,34 @@ describe('Bookings API Tests', () => {
 		expect(Array.isArray(response.data.errors)).toBe(true)
 		expect(response.data.errors.length).toBe(0)
 	})
+  test('POST /api/bookings - should fail create a booking', async () => {
+		const newBooking = {
+			restaurant_id: 1,
+			restaurant_table_id: 1, // занятый стол
+			guest_count: 4,
+		}
+
+		let response: AxiosResponse<ApiErrorResponse>
+
+		try {
+			response = await axios.post(`${API_BASE_URL}/bookings`, newBooking, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			})
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				response = error.response as AxiosResponse<ApiErrorResponse>
+			} else {
+				throw error
+			}
+		}
+
+		expect(response.status).toBe(200)
+		expect(response.data.success).toBe(true)
+		expect(response.data.message).toBe('ok')
+		expect(Array.isArray(response.data.data)).toBe(true)
+		expect(Array.isArray(response.data.errors)).toBe(true)
+		expect(response.data.errors.length).toBe(0)
+	})
 })
