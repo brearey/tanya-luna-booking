@@ -5,10 +5,10 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc --build",
-		"clean": "tsc --build --clean",
+		"clean": "tsc --build --clean && rm -r dist",
 		"prod": "node ./dist/index.js",
 		"dev": "ts-node-dev --rs ./src/index.ts",
-		"test": "jest",
+		"test": "jest --rootDir ./src/__tests__",
 		"test:watch": "jest --watchAll",
 		"lint": "npx eslint 'src/**/*.{ts,js}'",
 		"format": "prettier --write ."
