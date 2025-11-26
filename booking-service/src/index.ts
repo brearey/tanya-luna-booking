@@ -44,15 +44,17 @@ async function subscribe() {
 				console.log({
 					id: msg.id,
 					status: msg.status,
+					inDate: msg.inDate,
 					topic: topic,
 					partition: partition,
 				})
-        // select * from booking where id = 2;
-        const bookingResult = await db.query('select * from booking where id = $1;', [msg.id])
-        // Set booking status CHECKING_AVAILABILITY
-        const debug = await db.query('update booking set booking_status = \'CHECKING_AVAILABILITY\' where id = $1 returning id', [bookingResult.rows[0].id])
-        console.log('CHECKING_AVAILABILITY', debug.rows[0])
-        /*
+				// select * from booking where id = 2;
+				const bookingResult = await db.query('select * from booking where id = $1;', [msg.id])
+				// Set booking status CHECKING_AVAILABILITY
+				await db.query("update booking set booking_status = 'CHECKING_AVAILABILITY' where id = $1 returning id", [
+					bookingResult.rows[0].id,
+				])
+				/*
         rows: [
           {
             id: 3,
@@ -63,19 +65,25 @@ async function subscribe() {
           }
         ],
         */
-        // select * from restaurant_table where is_available = true and id = 2;
-        const restaurantTableResult = await db.query('select * from restaurant_table where is_available = true and id = $1;', [bookingResult.rows[0].restaurant_table_id])
-        const isAvailable = restaurantTableResult.rows[0]?.is_available ? restaurantTableResult.rows[0].is_available : null
-        if (isAvailable) {
-          await db.query('update restaurant_table set is_available = false where id = $1', [bookingResult.rows[0].restaurant_table_id])
-          // const updatedTableId = updateTableResult.rows[0].id
-          await db.query('update booking set booking_status = \'CONFIRMED\' where id = $1', [bookingResult.rows[0].id])
-          // const updatedBookingId = updateBookingResult.rows[0].id
-          
-        } else {
-          await db.query('update booking set booking_status = \'REJECTED\' where id = $1', [bookingResult.rows[0].id])
-          // const updatedBookingId = updateBookingResult.rows[0].id
-        }
+				// select * from restaurant_table where is_available = true and id = 2;
+				const restaurantTableResult = await db.query(
+					'select * from restaurant_table where is_available = true and id = $1 and in_date = $2;',
+					[bookingResult.rows[0].restaurant_table_id, msg.inDate]
+				)
+				const isAvailable = restaurantTableResult.rows[0]?.is_available
+					? restaurantTableResult.rows[0].is_available
+					: null
+				if (isAvailable) {
+					await db.query('update restaurant_table set is_available = false where id = $1', [
+						bookingResult.rows[0].restaurant_table_id,
+					])
+					// const updatedTableId = updateTableResult.rows[0].id
+					await db.query("update booking set booking_status = 'CONFIRMED' where id = $1", [bookingResult.rows[0].id])
+					// const updatedBookingId = updateBookingResult.rows[0].id
+				} else {
+					await db.query("update booking set booking_status = 'REJECTED' where id = $1", [bookingResult.rows[0].id])
+					// const updatedBookingId = updateBookingResult.rows[0].id
+				}
 			}
 		},
 	})

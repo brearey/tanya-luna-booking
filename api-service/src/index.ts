@@ -94,6 +94,7 @@ app.post('/api/bookings', async (req, res) => {
 					value: JSON.stringify({
 						id: createdBooking.rows[0].id,
 						status: bookingStatus,
+						inDate: req.body.in_date,
 					}),
 				},
 			],

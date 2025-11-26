@@ -9,6 +9,13 @@ interface ApiErrorResponse {
 	errors: unknown[]
 }
 
+const newBooking = {
+	restaurant_id: 1,
+	restaurant_table_id: 2,
+	guest_count: 4,
+	in_date: '2025-11-27',
+}
+
 describe('Bookings API Tests', () => {
 	test('GET /api/bookings - should return list of bookings', async () => {
 		const response: AxiosResponse<ApiErrorResponse> = await axios.get(`${API_BASE_URL}/bookings`)
@@ -19,12 +26,6 @@ describe('Bookings API Tests', () => {
 	})
 
 	test('POST /api/bookings - should create a booking', async () => {
-		const newBooking = {
-			restaurant_id: 1,
-			restaurant_table_id: 2,
-			guest_count: 4,
-		}
-
 		let response: AxiosResponse<ApiErrorResponse>
 
 		try {
@@ -48,13 +49,8 @@ describe('Bookings API Tests', () => {
 		expect(Array.isArray(response.data.errors)).toBe(true)
 		expect(response.data.errors.length).toBe(0)
 	})
-  test('POST /api/bookings - should fail create a booking', async () => {
-		const newBooking = {
-			restaurant_id: 1,
-			restaurant_table_id: 1, // занятый стол
-			guest_count: 4,
-		}
-
+	test('POST /api/bookings - should fail create a booking', async () => {
+		newBooking.restaurant_table_id = 1 // занятый стол
 		let response: AxiosResponse<ApiErrorResponse>
 
 		try {
