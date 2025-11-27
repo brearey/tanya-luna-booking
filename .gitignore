@@ -4,8 +4,10 @@ api-service/dist/
 api-service/node_modules/
 api-service/generated/
 api-service/.env
+api-service/tsconfig.tsbuildinfo
 booking-service/dist/
 booking-service/node_modules/
 booking-service/generated/
 booking-service/.env
+booking-service/tsconfig.tsbuildinfo
 .env

@@ -8,13 +8,13 @@ export const BookingService = {
 		return res?.rows[0]?.id ? true : false
 	},
 
-  checkingBooking: async (id: number) => {
+	checkingBooking: async (id: number) => {
 		await BookingRepository.updateStatus(id, BookingStatus.CHECKING_AVAILABILITY)
 	},
 
 	approveBooking: async (id: number, restaurantTableId: number) => {
 		await BookingRepository.updateStatus(id, BookingStatus.CONFIRMED)
-    await RestaurantTableRepository.setAvailableTable(restaurantTableId, false)
+		await RestaurantTableRepository.setAvailableTable(restaurantTableId, false)
 	},
 
 	rejectBooking: async (id: number) => {

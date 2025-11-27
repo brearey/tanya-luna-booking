@@ -7,10 +7,7 @@ export const RestaurantTableRepository = {
 			inDate,
 		])
 	},
-  setAvailableTable: async (id: number, isAvailable: boolean) => {
-		return await db.query('update restaurant_table set is_available = $1 where id = $2', [
-			isAvailable,
-      id
-		])
+	setAvailableTable: async (id: number, isAvailable: boolean) => {
+		return await db.query('update restaurant_table set is_available = $1 where id = $2', [isAvailable, id])
 	},
 }
