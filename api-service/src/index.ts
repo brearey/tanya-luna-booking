@@ -4,17 +4,10 @@ import bodyParser from 'body-parser'
 import { ApiResponse } from './types/app-types'
 import { logger } from './utils/logger'
 import { db } from './config/db'
-import { Kafka, Partitioners } from 'kafkajs'
+import { producer } from './services/booking-producer'
 
 const app: Application = express()
 const PORT = ENV.PORT || 5000
-const KAFKA_CLIENT_ID = 'booking-service'
-const KAFKA_TOPIC = 'booking-topic'
-const KAFKA_BROKER = 'localhost:9092'
-const kafka = new Kafka({
-	clientId: KAFKA_CLIENT_ID,
-	brokers: [KAFKA_BROKER],
-})
 
 app.use(bodyParser.json())
 app.use(logger.request)
@@ -78,10 +71,6 @@ app.post('/api/bookings', async (req, res) => {
 			[req.body.restaurant_id, req.body.guest_count, req.body.restaurant_table_id]
 		)
 
-		const producer = await kafka.producer({
-			createPartitioner: Partitioners.LegacyPartitioner,
-		})
-		await producer.connect()
 		await producer.send({
 			topic: KAFKA_TOPIC,
 			messages: [
@@ -94,8 +83,7 @@ app.post('/api/bookings', async (req, res) => {
 				},
 			],
 		})
-		await producer.disconnect()
-
+		
 		const response: ApiResponse = {
 			success: true,
 			message: 'ok',

@@ -11,3 +11,4 @@ booking-service/generated/
 booking-service/.env
 booking-service/tsconfig.tsbuildinfo
 .env
+.github
