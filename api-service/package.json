@@ -1,7 +1,7 @@
 {
-	"name": "tanya-luna-booking",
+	"name": "tanya-loona-booking",
 	"version": "1.0.0",
-	"description": "tanya-luna-booking project",
+	"description": "tanya-loona-booking project",
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc --build",
