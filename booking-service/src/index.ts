@@ -9,5 +9,5 @@ app.use(bodyParser.json())
 startConsumer()
 
 app.listen(ENV.PORT, () => {
-  console.log(`Server running on port ${ENV.PORT}`)
+	console.log(`Server running on port ${ENV.PORT}`)
 })
