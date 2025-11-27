@@ -4,7 +4,7 @@ import express, { Application } from 'express'
 import bodyParser from 'body-parser'
 import { ApiResponse } from './types/app-types'
 import { logger } from './utils/logger'
-import { connect } from './db/connect'
+import { connect } from './config/db'
 import { Kafka } from 'kafkajs'
 
 const app: Application = express()
