@@ -1,14 +1,13 @@
-import { config } from 'dotenv'
-config() // dotenv
+import { ENV } from './config/env'
 import express, { Application } from 'express'
 import bodyParser from 'body-parser'
 import { ApiResponse, ApiError } from './types/app-types'
 import { logger } from './utils/logger'
-import { connect } from './db/connect'
+import { db } from './config/db'
 import { Kafka, Partitioners } from 'kafkajs'
 
 const app: Application = express()
-const PORT = process.env.SERVER_PORT || 5000
+const PORT = ENV.PORT || 5000
 const KAFKA_CLIENT_ID = 'booking-service'
 const KAFKA_TOPIC = 'booking-topic'
 const KAFKA_BROKER = 'localhost:9092'
@@ -32,7 +31,6 @@ app.get('/api/health', (req, res) => {
 
 app.get('/api/bookings/:bookingId', async (req, res) => {
 	try {
-		const db = connect()
 		const bookings = await db.query('SELECT * FROM booking WHERE id = $1', [req.params.bookingId])
 		const response: ApiResponse = {
 			success: true,
@@ -54,7 +52,6 @@ app.get('/api/bookings/:bookingId', async (req, res) => {
 
 app.get('/api/bookings', async (req, res) => {
 	try {
-		const db = connect()
 		const bookings = await db.query('SELECT * FROM booking')
 		const response: ApiResponse = {
 			success: true,
@@ -76,7 +73,6 @@ app.get('/api/bookings', async (req, res) => {
 
 app.post('/api/bookings', async (req, res) => {
 	try {
-		const db = connect()
 		const createdBooking = await db.query(
 			"insert into booking (restaurant_id, guest_count, restaurant_table_id, booking_status) VALUES ($1,$2,$3, 'CREATED') RETURNING id, restaurant_table_id;",
 			[req.body.restaurant_id, req.body.guest_count, req.body.restaurant_table_id]
