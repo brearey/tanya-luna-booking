@@ -15,8 +15,8 @@ export type ApiResponse = {
 // CONFIRMED — столик зарезервирован.
 // REJECTED — бронь отклонена.
 export enum BookingStatus {
-	'CREATED',
-	'CHECKING_AVAILABILITY',
-	'CONFIRMED',
-	'REJECTED',
+	CREATED = 'CREATED',
+	CHECKING_AVAILABILITY = 'CHECKING_AVAILABILITY',
+	CONFIRMED = 'CONFIRMED',
+	REJECTED = 'REJECTED',
 }

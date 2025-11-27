@@ -10,12 +10,13 @@ export const startConsumer = async () => {
 	await consumer.run({
 		eachMessage: async ({ message }) => {
 			try {
-				const { bookingId, approved } = JSON.parse(message.value!.toString())
+				const { id, restaurantTableId, inDate } = JSON.parse(message.value!.toString())
+				const isAvailable = await BookingService.checkingAvailable(restaurantTableId, inDate)
 
-				if (approved) {
-					await BookingService.approveBooking(bookingId)
+				if (isAvailable) {
+					await BookingService.approveBooking(id, restaurantTableId)
 				} else {
-					await BookingService.rejectBooking(bookingId)
+					await BookingService.rejectBooking(id)
 				}
 			} catch (e) {
 				console.error('Kafka consumer error:', e)

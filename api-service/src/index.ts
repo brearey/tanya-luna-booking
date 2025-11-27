@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 config() // dotenv
 import express, { Application } from 'express'
 import bodyParser from 'body-parser'
-import { ApiResponse, ApiError, BookingStatus } from './types/app-types'
+import { ApiResponse, ApiError } from './types/app-types'
 import { logger } from './utils/logger'
 import { connect } from './db/connect'
 import { Kafka, Partitioners } from 'kafkajs'
@@ -78,14 +78,13 @@ app.post('/api/bookings', async (req, res) => {
 	try {
 		const db = connect()
 		const createdBooking = await db.query(
-			"insert into booking (restaurant_id, guest_count, restaurant_table_id, booking_status) VALUES ($1,$2,$3, 'CREATED') RETURNING id;",
+			"insert into booking (restaurant_id, guest_count, restaurant_table_id, booking_status) VALUES ($1,$2,$3, 'CREATED') RETURNING id, restaurant_table_id;",
 			[req.body.restaurant_id, req.body.guest_count, req.body.restaurant_table_id]
 		)
 
 		const producer = await kafka.producer({
 			createPartitioner: Partitioners.LegacyPartitioner,
 		})
-		const bookingStatus: BookingStatus = 'CREATED'
 		await producer.connect()
 		await producer.send({
 			topic: KAFKA_TOPIC,
@@ -93,7 +92,7 @@ app.post('/api/bookings', async (req, res) => {
 				{
 					value: JSON.stringify({
 						id: createdBooking.rows[0].id,
-						status: bookingStatus,
+						restaurantTableId: createdBooking.rows[0].restaurant_table_id,
 						inDate: req.body.in_date,
 					}),
 				},
