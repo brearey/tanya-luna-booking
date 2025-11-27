@@ -1,7 +1,7 @@
 import { ENV } from './config/env'
 import express, { Application } from 'express'
 import bodyParser from 'body-parser'
-import { ApiResponse, ApiError } from './types/app-types'
+import { ApiResponse } from './types/app-types'
 import { logger } from './utils/logger'
 import { db } from './config/db'
 import { Kafka, Partitioners } from 'kafkajs'
@@ -40,7 +40,7 @@ app.get('/api/bookings/:bookingId', async (req, res) => {
 		}
 		res.status(200).json(response)
 	} catch (e: unknown) {
-		const err = e as ApiError
+		const err = e as Error
 		res.status(500).json({
 			success: false,
 			message: 'error',
@@ -61,7 +61,7 @@ app.get('/api/bookings', async (req, res) => {
 		}
 		res.status(200).json(response)
 	} catch (e: unknown) {
-		const err = e as ApiError
+		const err = e as Error
 		res.status(500).json({
 			success: false,
 			message: 'error',
@@ -104,7 +104,7 @@ app.post('/api/bookings', async (req, res) => {
 		}
 		res.status(200).json(response)
 	} catch (e: unknown) {
-		const err = e as ApiError
+		const err = e as Error
 		console.error(e)
 		res.status(500).json({
 			success: false,
