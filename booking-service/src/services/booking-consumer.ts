@@ -11,6 +11,7 @@ export const startConsumer = async () => {
 		eachMessage: async ({ message }) => {
 			try {
 				const { id, restaurantTableId, inDate } = JSON.parse(message.value!.toString())
+        await BookingService.checkingBooking(id)
 				const isAvailable = await BookingService.checkingAvailable(restaurantTableId, inDate)
 
 				if (isAvailable) {
