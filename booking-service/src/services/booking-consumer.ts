@@ -1,6 +1,7 @@
 import { kafka } from '../config/kafka'
 import { ENV } from '../config/env'
 import { BookingService } from './booking-service'
+import { logger } from '../utils/logger'
 
 export const startConsumer = async () => {
 	const consumer = kafka.consumer({ groupId: 'booking_group' })
@@ -20,7 +21,7 @@ export const startConsumer = async () => {
 					await BookingService.rejectBooking(id)
 				}
 			} catch (e) {
-				console.error('Kafka consumer error:', e)
+				logger.error(e as Error)
 			}
 		},
 	})
