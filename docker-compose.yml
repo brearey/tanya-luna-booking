@@ -1,36 +1,37 @@
 services:
   database:
-    image: postgres:16.10-alpine
+    image: postgres:16.10-alpine3.22
     container_name: tanya-loona-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-
+      - ./database:/docker-entrypoint-initdb.d
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
   kafka:
-    image: apache/kafka:4.1.1
+    image: wurstmeister/kafka:2.11-1.1.1
     container_name: kafka
-    environment:
-      KAFKA_ENABLE_KRAFT: "yes"
-      KAFKA_BROKER_ID: 1
-      KAFKA_CFG_NODE_ID: 1
-      KAFKA_CFG_PROCESS_ROLES: "broker,controller"
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
-      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093"
-      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
-      ALLOW_PLAINTEXT_LISTENER: "yes"
-      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports:
       - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "booking-topic:1:1"
     volumes:
-      - kafka_data:/apache/kafka
+      - /var/run/docker.sock:/var/run/docker.sock
 
   api-service:
     build: ./api-service
@@ -39,7 +40,6 @@ services:
       - "5000:5000"
     environment:
       KAFKA_BROKER: kafka:9092
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
     depends_on:
       - kafka
       - database
@@ -51,11 +51,8 @@ services:
       - "5001:5001"
     environment:
       KAFKA_BROKER: kafka:9092
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
     depends_on:
       - kafka
       - database
-
 volumes:
   postgres_data:
-  kafka_data:

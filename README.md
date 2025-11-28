@@ -73,7 +73,7 @@
 
 ## TODO
 1. Сделать рефакторинг api service DONE
-2. Завернуть обе сервиса в докер
+2. Завернуть обе сервиса в докер DONE
 3. Написать инструкцию запуска в ридми
 
 #### Default ports:
@@ -82,12 +82,12 @@
 
 #### Get topics list
 ```bash
-sudo docker exec -it tanya-loona-booking-kafka-1 kafka-topics.sh --list --zookeeper zookeeper:2181
+sudo docker exec -it kafka /opt/kafka/bin/kafka-topics.sh --list --zookeeper zookeeper:2181
 ```
 
 #### Get all messages from topic
 ```bash
-sudo docker exec -it tanya-loona-booking-kafka-1 kafka-console-consumer.sh --topic booking-topic --from-beginning --bootstrap-server localhost:9092
+sudo docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh --topic booking-topic --from-beginning --bootstrap-server kafka:9092
 ```
 
 #### HTTP requests in shell
