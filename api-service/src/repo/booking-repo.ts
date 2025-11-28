@@ -7,4 +7,10 @@ export const BookingRepository = {
 			[restaurant_id, guest_count, restaurant_table_id]
 		)
 	},
+	getBookingById: async (id: number) => {
+		return await db.query('SELECT * FROM booking WHERE id = $1', [id])
+	},
+	getBookings: async () => {
+		return await db.query('SELECT * FROM booking ORDER BY id')
+	},
 }
