@@ -25,7 +25,7 @@ app.get(BASE_URL + '/health', (req, res) => {
 
 async function start() {
 	app.listen(PORT, () => {
-		console.log(`API service running at http://localhost:${PORT}`)
+		logger.info(`API service running at http://localhost:${PORT}`)
 	})
 }
 

@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from 'express'
 import { BookingRepository } from '../repo/booking-repo'
 import { ApiResponse, BookingDTO } from '../types/app-types'
 import { createProducer, sendMessage } from '../services/booking-producer'
+import { logger } from '../utils/logger'
 
 export const bookingRouter = Router()
 
@@ -18,6 +19,7 @@ bookingRouter.get('/bookings/:bookingId', async (req: Request, res: Response) =>
 		res.status(200).json(response)
 	} catch (e: unknown) {
 		const err = e as Error
+		logger.error(err)
 		res.status(500).json({
 			success: false,
 			message: 'error',
@@ -39,6 +41,7 @@ bookingRouter.get('/bookings', async (req: Request, res: Response) => {
 		res.status(200).json(response)
 	} catch (e: unknown) {
 		const err = e as Error
+		logger.error(err)
 		res.status(500).json({
 			success: false,
 			message: 'error',
@@ -73,7 +76,7 @@ bookingRouter.post('/bookings', async (req: Request, res: Response) => {
 		res.status(200).json(response)
 	} catch (e: unknown) {
 		const err = e as Error
-		console.error(e)
+		logger.error(err)
 		res.status(500).json({
 			success: false,
 			message: 'error',
