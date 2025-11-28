@@ -15,3 +15,9 @@ export enum BookingStatus {
 	CONFIRMED = 'CONFIRMED',
 	REJECTED = 'REJECTED',
 }
+
+export type BookingDTO = {
+	id: number
+	restaurantTableId: number
+	inDate: Date
+}
