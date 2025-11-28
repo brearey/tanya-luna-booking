@@ -1,5 +1,27 @@
 # Приложение NodeJS для бронирования свободных столиков в ресторанах
 
+## Quick Start
+
+```bash
+git clone https://github.com/brearey/tanya-luna-booking.git
+
+cd tanya-luna-booking
+
+cp api-service/.env.example api-service/.env
+cp booking-service/.env.example booking-service/.env
+cp .env.example .env
+
+sudo docker compose up --build
+
+```
+
+Для проверки работы приложения можно запустить тесты:
+```bash
+cd api-service
+npm install
+npm run test
+```
+
 ## Стэк
 - Node JS среда
 - Express JS библиотека для развертывания серверов
@@ -69,28 +91,4 @@
     ],
     "errors": []
 }
-```
-
-## TODO
-1. Сделать рефакторинг api service DONE
-2. Завернуть обе сервиса в докер DONE
-3. Написать инструкцию запуска в ридми
-
-#### Default ports:
-- API service `5000`
-- Booking service `5001`
-
-#### Get topics list
-```bash
-sudo docker exec -it kafka /opt/kafka/bin/kafka-topics.sh --list --zookeeper zookeeper:2181
-```
-
-#### Get all messages from topic
-```bash
-sudo docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh --topic booking-topic --from-beginning --bootstrap-server kafka:9092
-```
-
-#### HTTP requests in shell
-```bash
-curl http://localhost:5000/api/bookings | python3 -m json.tool
 ```
